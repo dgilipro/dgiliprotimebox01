@@ -1,0 +1,246 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+:root {
+    --primary-color: #4a90e2;
+    --secondary-color: #f5a623;
+    --background-color: #f8f9fa;
+    --card-background: #ffffff;
+    --text-color: #333333;
+    --border-color: #e0e0e0;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    line-height: 1.6;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    padding: 10px;
+}
+
+.planner-container {
+    max-width: 100%;
+    margin: 0 auto;
+    background-color: var(--card-background);
+    padding: 15px;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+h1 {
+    color: var(--primary-color);
+    margin-bottom: 15px;
+    font-size: 1.8em;
+}
+
+h2 {
+    color: var(--primary-color);
+    margin-bottom: 10px;
+    font-size: 1.3em;
+}
+
+.date-picker {
+    margin-bottom: 15px;
+}
+
+.date-picker input {
+    padding: 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    font-size: 0.9em;
+    width: 100%;
+    max-width: 200px;
+}
+
+.card {
+    background-color: var(--card-background);
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 15px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+}
+
+textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    resize: vertical;
+    font-size: 0.9em;
+    transition: border-color 0.3s ease;
+}
+
+textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 5px;
+}
+
+th, td {
+    padding: 10px;
+    text-align: left;
+}
+
+th {
+    background-color: var(--primary-color);
+    color: white;
+    font-weight: 600;
+    font-size: 0.9em;
+}
+
+td {
+    background-color: var(--card-background);
+    border-top: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+    font-size: 0.9em;
+}
+
+td:first-child {
+    border-left: 1px solid var(--border-color);
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
+
+td:last-child {
+    border-right: 1px solid var(--border-color);
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+.btn {
+    display: inline-block;
+    background-color: var(--primary-color);
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.btn:hover {
+    background-color: #3a7bc8;
+    transform: translateY(-2px);
+}
+
+.progress-bar {
+    width: 100%;
+    height: 15px;
+    background-color: var(--border-color);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 10px;
+}
+
+#progress-fill {
+    height: 100%;
+    background-color: var(--secondary-color);
+    width: 0;
+    transition: width 0.3s ease-in-out;
+}
+
+.minus-sign {
+    background-color: #ff4444;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 25px;
+    height: 25px;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.minus-sign:hover {
+    background-color: #cc0000;
+    transform: scale(1.1);
+}
+
+#completed-tasks {
+    list-style-type: none;
+}
+
+#completed-tasks li {
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border-color);
+    font-size: 0.9em;
+}
+
+#completed-tasks li:last-child {
+    border-bottom: none;
+}
+
+@media print {
+    .btn, .minus-sign {
+        display: none;
+    }
+    .planner-container {
+        box-shadow: none;
+    }
+}
+
+@media (max-width: 600px) {
+    body {
+        padding: 5px;
+    }
+
+    .planner-container {
+        padding: 10px;
+    }
+
+    h1 {
+        font-size: 1.5em;
+    }
+
+    h2 {
+        font-size: 1.2em;
+    }
+
+    .card {
+        padding: 10px;
+    }
+
+    table {
+        font-size: 0.8em;
+    }
+
+    th, td {
+        padding: 8px;
+    }
+
+    .btn {
+        font-size: 0.8em;
+        padding: 8px 16px;
+    }
+
+    .minus-sign {
+        width: 20px;
+        height: 20px;
+        font-size: 14px;
+    }
+
+    input[type="time"], input[type="text"] {
+        font-size: 0.8em;
+        padding: 5px;
+    }
+}
