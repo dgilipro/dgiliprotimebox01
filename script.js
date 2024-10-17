@@ -1,33 +1,42 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const taskTable = document.getElementById('task-tbody');
+    const taskTbody = document.getElementById('task-tbody');
     const addTaskButton = document.getElementById('add-task');
     const progressFill = document.getElementById('progress-fill');
     const progressText = document.getElementById('progress-text');
     const completedTasksList = document.getElementById('completed-tasks');
     const printButton = document.getElementById('print-button');
+    const resetButton = document.getElementById('reset-button');
     const dateInput = document.getElementById('date');
+    const topPriorities = document.getElementById('top-priorities');
+    const brainDump = document.getElementById('brain-dump');
 
     // Set today's date as default
     const today = new Date().toISOString().split('T')[0];
     dateInput.value = today;
 
-    function createTaskRow() {
+    // Load saved data
+    loadSavedData();
+
+    function createTaskRow(time = '', task = '', done = false) {
         const row = document.createElement('tr');
         row.innerHTML = `
             <td>
-                <input type="time" class="start-time"> to 
-                <input type="time" class="end-time">
+                <div class="time-input">
+                    <input type="time" class="start-time" value="${time.split(' to ')[0] || ''}">
+                    <span>to</span>
+                    <input type="time" class="end-time" value="${time.split(' to ')[1] || ''}">
+                </div>
             </td>
-            <td><input type="text" class="task-description" placeholder="Enter task"></td>
-            <td><input type="checkbox" class="task-done"></td>
-            <td><button class="minus-sign">−</button></td>
+            <td><input type="text" class="task-description" placeholder="Enter task" value="${task}"></td>
+            <td><input type="checkbox" class="task-done" ${done ? 'checked' : ''}></td>
+            <td><button class="remove-task">−</button></td>
         `;
         return row;
     }
 
     function updateProgress() {
-        const totalTasks = taskTable.querySelectorAll('tr').length;
-        const completedTasks = taskTable.querySelectorAll('.task-done:checked').length;
+        const totalTasks = taskTbody.querySelectorAll('tr').length;
+        const completedTasks = taskTbody.querySelectorAll('.task-done:checked').length;
         const progressPercentage = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
         
         progressFill.style.width = `${progressPercentage}%`;
@@ -36,7 +45,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function updateCompletedTasks() {
         completedTasksList.innerHTML = '';
-        taskTable.querySelectorAll('tr').forEach(row => {
+        taskTbody.querySelectorAll('tr').forEach(row => {
             const checkbox = row.querySelector('.task-done');
             const taskDescription = row.querySelector('.task-description').value;
             if (checkbox.checked && taskDescription.trim() !== '') {
@@ -47,24 +56,72 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    function saveData() {
+        const tasks = [];
+        taskTbody.querySelectorAll('tr').forEach(row => {
+            const startTime = row.querySelector('.start-time').value;
+            const endTime = row.querySelector('.end-time').value;
+            const task = row.querySelector('.task-description').value;
+            const done = row.querySelector('.task-done').checked;
+            tasks.push({ time: `${startTime} to ${endTime}`, task, done });
+        });
+
+        const data = {
+            date: dateInput.value,
+            topPriorities: topPriorities.value,
+            brainDump: brainDump.value,
+            tasks: tasks
+        };
+
+        localStorage.setItem('timeboxProData', JSON.stringify(data));
+    }
+
+    function loadSavedData() {
+        const savedData = localStorage.getItem('timeboxProData');
+        if (savedData) {
+            const data = JSON.parse(savedData);
+            dateInput.value = data.date;
+            topPriorities.value = data.topPriorities;
+            brainDump.value = data.brainDump;
+
+            taskTbody.innerHTML = '';
+            data.tasks.forEach(task => {
+                const newRow = createTaskRow(task.time, task.task, task.done);
+                taskTbody.appendChild(newRow);
+            });
+
+            updateProgress();
+            updateCompletedTasks();
+        } else {
+            // Initialize with a few empty rows if no saved data
+            for (let i = 0; i < 3; i++) {
+                taskTbody.appendChild(createTaskRow());
+            }
+        }
+    }
+
     addTaskButton.addEventListener('click', function() {
         const newRow = createTaskRow();
-        taskTable.appendChild(newRow);
+        taskTbody.appendChild(newRow);
         updateProgress();
+        saveData();
     });
 
-    taskTable.addEventListener('click', function(e) {
-        if (e.target.classList.contains('minus-sign')) {
+    taskTbody.addEventListener('click', function(e) {
+        if (e.target.classList.contains('remove-task')) {
             e.target.closest('tr').remove();
             updateProgress();
             updateCompletedTasks();
+            saveData();
         }
     });
 
-    taskTable.addEventListener('change', function(e) {
-        if (e.target.classList.contains('task-done') || e.target.classList.contains('task-description')) {
+    taskTbody.addEventListener('change', function(e) {
+        if (e.target.classList.contains('task-done') || e.target.classList.contains('task-description') || 
+            e.target.classList.contains('start-time') || e.target.classList.contains('end-time')) {
             updateProgress();
             updateCompletedTasks();
+            saveData();
         }
     });
 
@@ -72,8 +129,10 @@ document.addEventListener('DOMContentLoaded', function() {
         window.print();
     });
 
-    // Initialize with a few empty rows
-    for (let i = 0; i < 3; i++) {
-        taskTable.appendChild(createTaskRow());
-    }
+    dateInput.addEventListener('change', saveData);
+    topPriorities.addEventListener('input', saveData);
+    brainDump.addEventListener('input', saveData);
+
+    // Save data when leaving the page
+    window.addEventListener('beforeunload', saveData);
 });
