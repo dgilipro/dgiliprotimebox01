@@ -93,11 +93,30 @@ document.addEventListener('DOMContentLoaded', function() {
             updateProgress();
             updateCompletedTasks();
         } else {
-            // Initialize with a few empty rows if no saved data
-            for (let i = 0; i < 3; i++) {
-                taskTbody.appendChild(createTaskRow());
-            }
+            resetPlanner();
         }
+    }
+
+    function resetPlanner() {
+        // Clear all input fields
+        dateInput.value = today;
+        topPriorities.value = '';
+        brainDump.value = '';
+
+        // Clear task list
+        taskTbody.innerHTML = '';
+
+        // Add three empty rows
+        for (let i = 0; i < 3; i++) {
+            taskTbody.appendChild(createTaskRow());
+        }
+
+        // Reset progress
+        updateProgress();
+        updateCompletedTasks();
+
+        // Clear local storage
+        localStorage.removeItem('timeboxProData');
     }
 
     addTaskButton.addEventListener('click', function() {
@@ -127,6 +146,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     printButton.addEventListener('click', function() {
         window.print();
+    });
+
+    resetButton.addEventListener('click', function() {
+        if (confirm('Are you sure you want to reset the planner? This will clear all data.')) {
+            resetPlanner();
+        }
     });
 
     dateInput.addEventListener('change', saveData);
